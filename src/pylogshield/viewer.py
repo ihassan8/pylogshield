@@ -4,7 +4,7 @@ import os
 import time
 from collections import deque
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import Deque, List, Optional, Tuple, Union
 
 try:
     from rich import box
@@ -281,7 +281,7 @@ class LogViewer:
             return False
 
         # Rolling buffer of *raw* lines to feed batch renderer
-        window: deque[str] = deque(maxlen=max_lines)
+        window: Deque[str] = deque(maxlen=max_lines)
 
         # Start with a headers-only table; show a "waiting" placeholder caption
         table = self._build_table_from_lines([], level, keyword)

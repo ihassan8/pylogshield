@@ -13,7 +13,7 @@ jobs:
     name: Test
     uses: vertex-ai-automations/shared-workflows/.github/workflows/test.yml@main
     with:
-      python-versions: '["3.9", "3.10", "3.11", "3.12"]'
+      python-versions: '["3.8", "3.9", "3.10", "3.11", "3.12"]'
       os-matrix: '["ubuntu-latest", "windows-latest"]'
       install-command: 'pip install -e ".[tui,fastapi]" && pip install -r tests/requirements.txt'
       test-command: 'pytest tests/ -v --tb=short'

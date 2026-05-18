@@ -470,7 +470,8 @@ class ExportModal(ModalScreen):
             )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        ext = event.button.id.removeprefix("export-")
+        btn_id = event.button.id or ""
+        ext = btn_id[len("export-"):] if btn_id.startswith("export-") else btn_id
         stem = self._log_path.stem
         today = _date.today().isoformat()
         out = Path(f"{stem}-export-{today}.{ext}")

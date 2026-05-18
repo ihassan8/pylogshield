@@ -3,8 +3,7 @@ from __future__ import annotations
 import logging
 import threading
 import time
-from collections import Counter
-from typing import Any, Dict
+from typing import Any, Counter, Dict
 
 
 class LogMetricsHandler(logging.Handler):

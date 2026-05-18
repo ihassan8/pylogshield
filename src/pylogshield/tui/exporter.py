@@ -3,10 +3,9 @@ from __future__ import annotations
 import csv
 import html
 import json
-from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import List
+from typing import Counter, List
 
 from pylogshield.tui.reader import ParsedLine
 
@@ -21,7 +20,7 @@ class Exporter:
     def to_csv(self) -> None:
         """UTF-8 with BOM so Excel opens it correctly."""
         fieldnames = ["timestamp", "level", "logger", "module", "lineno", "message"]
-        extra_keys: list[str] = []
+        extra_keys: List[str] = []
         for row in self._rows:
             for k in row.extra:
                 if k not in extra_keys:

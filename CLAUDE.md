@@ -8,7 +8,7 @@ PyLogShield is a Python logging library extending the standard `logging` module 
 
 ## Build & Development Commands
 
-Declared `requires-python = ">=3.8"` in `pyproject.toml`; CI matrix tests 3.9–3.12.
+Declared `requires-python = ">=3.8"` in `pyproject.toml`; CI matrix tests 3.8–3.12.
 
 ```bash
 # Install in development mode (core only)

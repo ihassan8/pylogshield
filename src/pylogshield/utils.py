@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 from enum import IntEnum
 from threading import RLock
-from typing import Any, List, Type
+from typing import Any, List, Optional, Type, Union
 
 
 class LogLevel(IntEnum):
@@ -67,7 +67,7 @@ class LogLevel(IntEnum):
         return [level.name for level in sorted(cls, reverse=True)]
 
     @classmethod
-    def parse(cls, value: str | int) -> int:
+    def parse(cls, value: Union[str, int]) -> int:
         """Parse a level name or number to an integer.
 
         Parameters
@@ -112,7 +112,7 @@ class LogLevel(IntEnum):
             ) from None
 
     @classmethod
-    def from_name(cls, value: str | int) -> int:
+    def from_name(cls, value: Union[str, int]) -> int:
         """Parse a level name or number to an integer.
 
         This is an alias for :meth:`parse` kept for backward compatibility.
@@ -193,7 +193,7 @@ def add_log_level(name: str, value: int, *, logger_cls: Type[logging.Logger]) ->
         setattr(logger_cls, method_name, _log_method)
 
 
-def ensure_log_dir(path: str | None) -> None:
+def ensure_log_dir(path: Optional[str]) -> None:
     """Create the parent directory for a file path if it doesn't exist.
 
     Parameters
