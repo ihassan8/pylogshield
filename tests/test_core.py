@@ -743,11 +743,20 @@ class TestGetLoggerPlaceholder:
     def test_get_logger_when_child_registered_first(
         self, clean_logger_registry, temp_log_dir: Path
     ) -> None:
-        """get_logger('parent') must succeed even when a child logger exists."""
-        stdlib_logging.getLogger("parent.child")  # causes PlaceHolder at "parent"
+        """get_logger('parent') must succeed and preserve logger hierarchy."""
+        import logging as _logging
+        child = _logging.getLogger("parent.child")
         try:
             logger = get_logger("parent", log_directory=temp_log_dir, add_console=False)
             assert logger.name == "parent"
+            # Child must now point to the new PyLogShield parent
+            assert child.parent is logger, (
+                f"child.parent is {child.parent!r}, expected {logger!r}"
+            )
+            # Parent must be linked into the hierarchy (not orphaned)
+            assert logger.parent is not None, (
+                "logger.parent is None — PyLogShield is not in hierarchy"
+            )
             close_logger(logger)
         finally:
             # clean_logger_registry only removes test_* names; clean up manually

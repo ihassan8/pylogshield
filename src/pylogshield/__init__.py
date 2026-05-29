@@ -109,9 +109,19 @@ def get_logger(
                 return existing  # type: ignore[return-value]
 
             # PlaceHolder is inserted automatically by the logging manager when a child
-            # logger exists before the parent. It is not a real logger — replace it silently.
+            # logger exists before the parent. It is not a real logger — replace it and
+            # call the two stdlib fixup methods so that:
+            #   - children whose parent chain went through the placeholder are re-pointed
+            #     to the new PyLogShield (_fixupChildren)
+            #   - the new logger's own .parent is wired into the hierarchy (_fixupParents)
             if isinstance(existing, logging.PlaceHolder):
+                ph = existing
                 logging.Logger.manager.loggerDict.pop(name, None)
+                logger = PyLogShield(name=name, **kwargs)
+                logging.Logger.manager.loggerDict[name] = logger
+                logging.Logger.manager._fixupChildren(ph, logger)  # type: ignore[attr-defined]
+                logging.Logger.manager._fixupParents(logger)  # type: ignore[attr-defined]
+                return logger
 
             elif not force:
                 raise TypeError(
