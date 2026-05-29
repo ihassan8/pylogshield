@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import json
 import logging
+import logging as stdlib_logging
 from pathlib import Path
 
 import pytest
@@ -736,3 +737,40 @@ class TestShutdownCleansHandlers:
                     f"Handler {h!r} still has an open stream after shutdown()"
                 )
         close_logger(logger)
+
+
+class TestGetLoggerPlaceholder:
+    def test_get_logger_when_child_registered_first(
+        self, clean_logger_registry, temp_log_dir: Path
+    ) -> None:
+        """get_logger('parent') must succeed even when a child logger exists."""
+        stdlib_logging.getLogger("parent.child")  # causes PlaceHolder at "parent"
+        try:
+            logger = get_logger("parent", log_directory=temp_log_dir, add_console=False)
+            assert logger.name == "parent"
+            close_logger(logger)
+        finally:
+            # clean_logger_registry only removes test_* names; clean up manually
+            logging.Logger.manager.loggerDict.pop("parent", None)
+            logging.Logger.manager.loggerDict.pop("parent.child", None)
+
+
+class TestGetLoggerForceWarning:
+    def test_force_warning_text_is_accurate(
+        self, temp_log_dir: Path, clean_logger_registry
+    ) -> None:
+        """The force=True warning must describe what actually happens."""
+        import warnings
+
+        # Insert a plain stdlib logger so force=True triggers the warning path
+        original = stdlib_logging.getLogger("warn_test")
+        logging.Logger.manager.loggerDict["warn_test"] = original
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            replacement = get_logger(
+                "warn_test", force=True, log_directory=temp_log_dir, add_console=False
+            )
+            assert len(w) == 1
+            msg = str(w[0].message)
+            assert "no longer" not in msg.lower()
+        close_logger(replacement)

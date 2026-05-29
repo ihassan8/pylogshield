@@ -102,29 +102,33 @@ def get_logger(
     try:
         existing = logging.Logger.manager.loggerDict.get(name)
         if existing is not None:
-            # Check if it's a PyLogShield (direct instance check is most reliable)
+            # Return existing PyLogShield (or duck-compatible) logger
             if isinstance(existing, PyLogShield):
                 return existing
-
-            # Duck-typed compatibility check for subclasses or similar implementations
             if hasattr(existing, "_log_with_processing") and hasattr(existing, "_mask"):
                 return existing  # type: ignore[return-value]
 
-            if not force:
+            # PlaceHolder is inserted automatically by the logging manager when a child
+            # logger exists before the parent. It is not a real logger — replace it silently.
+            if isinstance(existing, logging.PlaceHolder):
+                logging.Logger.manager.loggerDict.pop(name, None)
+
+            elif not force:
                 raise TypeError(
                     f"Logger '{name}' already exists but is not a compatible PyLogShield. "
                     f"Actual type: {type(existing).__name__}. "
                     f"Use force=True to replace it."
                 )
-
-            warnings.warn(
-                f"get_logger: replacing existing logger '{name}' "
-                f"(type: {type(existing).__name__}) with a new PyLogShield instance. "
-                f"Any references to the old logger will no longer receive log records.",
-                UserWarning,
-                stacklevel=3,
-            )
-            logging.Logger.manager.loggerDict.pop(name, None)
+            else:
+                warnings.warn(
+                    f"get_logger: replacing existing logger '{name}' "
+                    f"(type: {type(existing).__name__}) with a new PyLogShield instance. "
+                    f"Any existing references to the old logger will continue to emit records "
+                    f"independently through their own handlers.",
+                    UserWarning,
+                    stacklevel=3,
+                )
+                logging.Logger.manager.loggerDict.pop(name, None)
 
         logger = PyLogShield(name=name, **kwargs)
         logging.Logger.manager.loggerDict[name] = logger
