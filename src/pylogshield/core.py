@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import sys
 from logging.handlers import QueueHandler, QueueListener
 from pathlib import Path
@@ -21,6 +22,16 @@ from pylogshield.handlers import (
 from pylogshield.limiter import RateLimiter
 from pylogshield.metrics import LogMetricsHandler
 from pylogshield.utils import LogLevel, ensure_log_dir
+
+
+def _mask_repl(m: "re.Match[str]") -> str:
+    """Replacement for the sensitive-field masking regex.
+
+    Preserves surrounding quote characters: token="secret" → token="***"
+    rather than token=***.
+    """
+    q = m.group(3) or ""  # empty string when value is unquoted
+    return f"{m.group(1)}{m.group(2)}{q}***{q}"
 
 
 class _SilentQueueHandler(QueueHandler):
@@ -297,7 +308,7 @@ class PyLogShield(logging.Logger):
             if k_lc in sensitive_keys:
                 masked[k] = "***"
             elif isinstance(v, str):
-                masked[k] = pattern.sub(lambda m: f"{m.group(1)}{m.group(2)}***", v)
+                masked[k] = pattern.sub(_mask_repl, v)
             elif isinstance(v, dict):
                 masked[k] = self._mask_mapping(v, sensitive_keys, pattern)
             elif isinstance(v, (list, tuple)):
@@ -323,7 +334,7 @@ class PyLogShield(logging.Logger):
             elif isinstance(item, (list, tuple)):
                 out.append(self._mask_sequence(item, sensitive_keys, pattern))
             elif isinstance(item, str):
-                out.append(pattern.sub(lambda m: f"{m.group(1)}{m.group(2)}***", item))  # type: ignore[arg-type]
+                out.append(pattern.sub(_mask_repl, item))  # type: ignore[arg-type]
             else:
                 out.append(item)
         return type(seq)(out) if isinstance(seq, tuple) else out
@@ -332,7 +343,7 @@ class PyLogShield(logging.Logger):
         sensitive_keys = frozenset(s.lower() for s in get_sensitive_fields())
         pattern = get_sensitive_pattern()
         if isinstance(payload, str):
-            return pattern.sub(lambda m: f"{m.group(1)}{m.group(2)}***", payload)
+            return pattern.sub(_mask_repl, payload)
         if isinstance(payload, dict):
             return self._mask_mapping(payload, sensitive_keys, pattern)
         if isinstance(payload, (list, tuple)):
@@ -354,7 +365,7 @@ class PyLogShield(logging.Logger):
     def _mask_string(self, text: str) -> str:
         """Apply the sensitive pattern to a single string and return the masked result."""
         pattern = get_sensitive_pattern()
-        return pattern.sub(lambda m: f"{m.group(1)}{m.group(2)}***", text)
+        return pattern.sub(_mask_repl, text)
 
     def _log_with_processing(
         self, level: int, msg: Any, *args: Any, mask: bool = False, **kwargs: Any
