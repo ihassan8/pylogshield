@@ -134,3 +134,30 @@ class TestMiddlewareIntegration:
         client.get("/boom")
         log_text = (tmp_path / "test_mw.log").read_text()
         assert "failed" in log_text.lower() or "error" in log_text.lower()
+
+
+class TestMiddlewareSanitization:
+    def test_sanitize_log_field_removes_cr_and_lf(self) -> None:
+        """Control characters must be stripped from log field values."""
+        from pylogshield.middleware import _sanitize_log_field
+
+        assert _sanitize_log_field("abc\r\ndef") == "abcdef"
+
+    def test_sanitize_log_field_preserves_normal_path(self) -> None:
+        """Normal URL paths must not be altered."""
+        from pylogshield.middleware import _sanitize_log_field
+
+        assert _sanitize_log_field("/api/v1/users?q=hello") == "/api/v1/users?q=hello"
+
+    def test_sanitize_log_field_removes_null_bytes(self) -> None:
+        """Null bytes must be stripped."""
+        from pylogshield.middleware import _sanitize_log_field
+
+        assert _sanitize_log_field("path\x00injected") == "pathinjected"
+
+    def test_newline_in_method_does_not_inject(self) -> None:
+        """Newlines embedded in the HTTP method must not survive sanitization."""
+        from pylogshield.middleware import _sanitize_log_field
+
+        result = _sanitize_log_field("GET\nINJECTED")
+        assert "\n" not in result

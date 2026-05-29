@@ -35,6 +35,17 @@ from typing import Any, Callable
 from pylogshield.context import async_log_context
 
 _REQUEST_ID_PATTERN = re.compile(r"[^A-Za-z0-9\-_]")
+_LOG_FIELD_CONTROL_CHARS = re.compile(r"[\r\n\t\x00-\x1f\x7f]")
+
+
+def _sanitize_log_field(value: str, max_len: int = 512) -> str:
+    """Strip control characters from a log field value to prevent log injection.
+
+    Removes newlines, carriage returns, null bytes, and other control
+    characters that could be used to forge log entries or corrupt JSON logs.
+    Normal URL-safe characters are preserved unchanged.
+    """
+    return _LOG_FIELD_CONTROL_CHARS.sub("", str(value)[:max_len])
 
 
 def _sanitize_request_id(value: str) -> str:
@@ -130,9 +141,9 @@ if _HAS_STARLETTE:
 
             async with async_log_context(
                 request_id=request_id,
-                http_method=request.method,
-                http_path=request.url.path,
-                client_ip=client_ip,
+                http_method=_sanitize_log_field(request.method),
+                http_path=_sanitize_log_field(str(request.url.path)),
+                client_ip=_sanitize_log_field(str(client_ip)) if client_ip else None,
             ):
                 try:
                     response = await call_next(request)
