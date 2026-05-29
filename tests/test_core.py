@@ -183,17 +183,20 @@ class TestPyLogShieldMasking:
         masked = basic_logger._mask(text)
         assert "***" in masked, "Empty quoted password value was not masked"
 
-    def test_mask_preserves_double_quotes(self, basic_logger):
+    def test_mask_preserves_double_quotes(self, basic_logger: PyLogShield) -> None:
+        """Masking a quoted value must preserve the surrounding double quotes."""
         basic_logger.info('token="abc123"', mask=True)
         content = basic_logger.log_file_path.read_text()
         assert 'token="***"' in content
 
-    def test_mask_preserves_single_quotes(self, basic_logger):
+    def test_mask_preserves_single_quotes(self, basic_logger: PyLogShield) -> None:
+        """Masking a quoted value must preserve the surrounding single quotes."""
         basic_logger.info("token='abc123'", mask=True)
         content = basic_logger.log_file_path.read_text()
         assert "token='***'" in content
 
-    def test_mask_quoted_multi_word_value(self, basic_logger):
+    def test_mask_quoted_multi_word_value(self, basic_logger: PyLogShield) -> None:
+        """Quoted values containing spaces must be fully masked."""
         basic_logger.info('password="hello world"', mask=True)
         content = basic_logger.log_file_path.read_text()
         assert 'password="***"' in content

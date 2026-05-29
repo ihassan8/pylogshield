@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import json
 import logging
-import re
 import sys
 from logging.handlers import QueueHandler, QueueListener
 from pathlib import Path
 from queue import Full, Queue
-from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Union
+
+if TYPE_CHECKING:
+    import re
 
 from pylogshield.config import add_sensitive_fields as cfg_add_sensitive_fields
 from pylogshield.config import get_sensitive_fields, get_sensitive_pattern
@@ -27,7 +29,7 @@ from pylogshield.utils import LogLevel, ensure_log_dir
 def _mask_repl(m: "re.Match[str]") -> str:
     """Replacement for the sensitive-field masking regex.
 
-    Preserves surrounding quote characters: token="secret" → token="***"
+    Preserves surrounding quote characters: token="secret" -> token="***"
     rather than token=***.
     """
     q = m.group(3) or ""  # empty string when value is unquoted
