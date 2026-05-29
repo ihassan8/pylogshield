@@ -150,6 +150,7 @@ class PyLogShield(logging.Logger):
         enable_context_scrubber: bool = True,
         enable_context: bool = False,
         queue_maxsize: int = 0,
+        show_location: bool = True,
     ) -> None:
         resolved_level = self._resolve_log_level(log_level)
         super().__init__(name, level=resolved_level)
@@ -173,7 +174,11 @@ class PyLogShield(logging.Logger):
             handlers.append(
                 create_rich_handler(self.log_level)
                 if use_rich
-                else create_console_handler(self.log_level, json_format=enable_json)
+                else create_console_handler(
+                    self.log_level,
+                    json_format=enable_json,
+                    show_location=show_location,
+                )
             )
 
         if self.log_file_path:
@@ -556,7 +561,7 @@ class PyLogShield(logging.Logger):
             use_queue, use_rich, rate_limit_seconds, log_directory, log_file,
             rotate_file, rotate_max_bytes, rotate_backup_count, add_console,
             enable_metrics, log_filter, enable_context_scrubber, enable_context,
-            queue_maxsize.
+            queue_maxsize, show_location.
 
         Returns
         -------
@@ -600,6 +605,7 @@ class PyLogShield(logging.Logger):
             enable_context_scrubber=bool(config.get("enable_context_scrubber", True)),
             enable_context=bool(config.get("enable_context", False)),
             queue_maxsize=int(config.get("queue_maxsize", 0)),
+            show_location=bool(config.get("show_location", True)),
         )
 
     @staticmethod

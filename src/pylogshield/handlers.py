@@ -33,8 +33,11 @@ _ENVELOPE_RESERVED: frozenset = frozenset(
 )
 
 
-def _standard_formatter() -> logging.Formatter:
-    fmt = "%(asctime)s.%(msecs)03d  %(levelname)-8s  %(name)s  %(module)s:%(lineno)d  %(message)s"
+def _standard_formatter(show_location: bool = True) -> logging.Formatter:
+    if show_location:
+        fmt = "%(asctime)s.%(msecs)03d  %(levelname)-8s  %(name)s  %(module)s:%(lineno)d  %(message)s"
+    else:
+        fmt = "%(asctime)s.%(msecs)03d  %(levelname)-8s  %(message)s"
     return logging.Formatter(fmt, datefmt="%Y-%m-%d %H:%M:%S")
 
 
@@ -174,7 +177,9 @@ class JsonFormatter(logging.Formatter):
         return f"{self.__class__.__name__}(indent={self.indent}, include_extra={self.include_extra})"
 
 
-def create_console_handler(level: int, *, json_format: bool = False) -> logging.Handler:
+def create_console_handler(
+    level: int, *, json_format: bool = False, show_location: bool = True
+) -> logging.Handler:
     """Create a console (stderr) handler with standard or JSON formatting.
 
     Parameters
@@ -183,6 +188,10 @@ def create_console_handler(level: int, *, json_format: bool = False) -> logging.
         The logging level for the handler.
     json_format : bool, optional
         Whether to use JSON formatting. Default is False.
+    show_location : bool, optional
+        Whether to include logger name and ``module:lineno`` in the plain-text
+        format. Has no effect when ``json_format=True`` (JSON always includes
+        ``module`` and ``lineno`` as top-level fields). Default is True.
 
     Returns
     -------
@@ -191,7 +200,9 @@ def create_console_handler(level: int, *, json_format: bool = False) -> logging.
     """
     handler = logging.StreamHandler()
     handler.setLevel(level)
-    handler.setFormatter(JsonFormatter() if json_format else _standard_formatter())
+    handler.setFormatter(
+        JsonFormatter() if json_format else _standard_formatter(show_location)
+    )
     return handler
 
 
