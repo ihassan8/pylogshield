@@ -117,7 +117,11 @@ def get_logger(
             if isinstance(existing, logging.PlaceHolder):
                 ph = existing
                 logging.Logger.manager.loggerDict.pop(name, None)
-                logger = PyLogShield(name=name, **kwargs)
+                try:
+                    logger = PyLogShield(name=name, **kwargs)
+                except Exception:
+                    logging.Logger.manager.loggerDict[name] = ph  # restore on failure
+                    raise
                 logging.Logger.manager.loggerDict[name] = logger
                 logging.Logger.manager._fixupChildren(ph, logger)  # type: ignore[attr-defined]
                 logging.Logger.manager._fixupParents(logger)  # type: ignore[attr-defined]

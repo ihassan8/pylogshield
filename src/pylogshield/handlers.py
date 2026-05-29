@@ -206,7 +206,7 @@ def create_console_handler(
     return handler
 
 
-def create_rich_handler(level: int) -> logging.Handler:
+def create_rich_handler(level: int, *, show_location: bool = True) -> logging.Handler:
     """Create a Rich console handler with colorized output.
 
     Falls back to a standard console handler if Rich is not installed.
@@ -232,13 +232,15 @@ def create_rich_handler(level: int) -> logging.Handler:
         h.setLevel(level)
         h.setFormatter(
             logging.Formatter("%(name)s  %(module)s:%(lineno)d  %(message)s")
+            if show_location
+            else logging.Formatter("%(message)s")
         )
         return h
-    return create_console_handler(level)
+    return create_console_handler(level, show_location=show_location)
 
 
 def create_file_handler(
-    path: Path, level: int, *, json_format: bool = False
+    path: Path, level: int, *, json_format: bool = False, show_location: bool = True
 ) -> logging.Handler:
     """Create a simple file handler.
 
@@ -259,7 +261,7 @@ def create_file_handler(
     path.parent.mkdir(parents=True, exist_ok=True)
     handler = logging.FileHandler(path, encoding="utf-8")
     handler.setLevel(level)
-    handler.setFormatter(JsonFormatter() if json_format else _standard_formatter())
+    handler.setFormatter(JsonFormatter() if json_format else _standard_formatter(show_location))
     return handler
 
 
@@ -270,6 +272,7 @@ def create_rotating_file_handler(
     max_bytes: int = 5_000_000,
     backup_count: int = 5,
     json_format: bool = False,
+    show_location: bool = True,
 ) -> logging.Handler:
     """Create a rotating file handler that rotates logs based on file size.
 
@@ -296,5 +299,5 @@ def create_rotating_file_handler(
         path, maxBytes=max_bytes, backupCount=backup_count, encoding="utf-8"
     )
     handler.setLevel(level)
-    handler.setFormatter(JsonFormatter() if json_format else _standard_formatter())
+    handler.setFormatter(JsonFormatter() if json_format else _standard_formatter(show_location))
     return handler

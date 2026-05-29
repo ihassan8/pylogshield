@@ -30,6 +30,9 @@ pytest tests/ -v --cov=src/pylogshield --cov-report=term-missing
 pytest tests/test_core.py -v
 pytest tests/test_core.py::TestPyLogShieldMasking::test_mask_dict_password -v
 
+# Type-check
+mypy src/ --ignore-missing-imports
+
 # Build documentation locally
 mkdocs serve
 
@@ -106,6 +109,7 @@ Main export is `get_logger()` - returns a singleton `PyLogShield` instance by na
 - `caller_info` in decorators is captured at **decoration time** from `func.__code__`, so logged file/line always points to the function definition, not the call site
 - When `use_queue=True` and `queue_maxsize > 0`, records are **dropped silently** when the queue is full — a custom `_SilentQueueHandler` subclass catches `queue.Full` without writing to stderr
 - `queue_maxsize=0` (the default) is unbounded and never drops messages
+- `show_location=True` (default) includes logger name and `module:lineno` in all plain-text handlers (console, file, rotating file, Rich). Set `False` for cleaner output. Has no effect on JSON output — JSON always emits `module` and `lineno` as top-level fields regardless
 
 ## CLI Usage
 
@@ -117,7 +121,7 @@ pylogshield levels  # List supported log levels
 
 ## Testing
 
-Tests are in `tests/` directory. `asyncio_mode = "auto"` is set in `pyproject.toml` — async test functions run without `@pytest.mark.asyncio`. `test_tui_reader.py` requires the `tui` extra; `test_handlers.py` requires the `fastapi` extra — install both before running the full suite.
+Tests are in `tests/` directory. `asyncio_mode = "auto"` is set in `pyproject.toml` — async test functions run without `@pytest.mark.asyncio`. `test_tui_reader.py` requires the `tui` extra; `test_handlers.py` and `test_middleware.py` require the `fastapi` extra — install both before running the full suite.
 
 Test modules:
 - `test_core.py` - PyLogShield class, masking, logging operations
@@ -127,7 +131,9 @@ Test modules:
 - `test_limiter.py` - RateLimiter
 - `test_metrics.py` - LogMetricsHandler
 - `test_decorators.py` - log_exceptions and trace decorators (sync, async, masking, trace shorthand)
-- `test_handlers.py` - Handler factories and JsonFormatter
+- `test_handlers.py` - Handler factories and JsonFormatter (requires `fastapi` extra)
+- `test_middleware.py` - PyLogShieldMiddleware and `_sanitize_request_id` (requires `fastapi` extra)
+- `test_cli.py` - CLI commands (`view`, `follow`, `levels`) via Typer test runner
 - `test_utils.py` - LogLevel enum and add_log_level
 - `test_viewer.py` - LogViewer
 - `test_tui_reader.py` - TUI `LogReader`, `ParsedLine`, `Exporter`, `LogViewerApp._parse_ts` (requires `tui` extra)

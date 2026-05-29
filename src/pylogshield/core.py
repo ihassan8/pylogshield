@@ -172,7 +172,7 @@ class PyLogShield(logging.Logger):
 
         if add_console:
             handlers.append(
-                create_rich_handler(self.log_level)
+                create_rich_handler(self.log_level, show_location=show_location)
                 if use_rich
                 else create_console_handler(
                     self.log_level,
@@ -191,12 +191,16 @@ class PyLogShield(logging.Logger):
                         max_bytes=rotate_max_bytes,
                         backup_count=rotate_backup_count,
                         json_format=enable_json,
+                        show_location=show_location,
                     )
                 )
             else:
                 handlers.append(
                     create_file_handler(
-                        self.log_file_path, self.log_level, json_format=enable_json
+                        self.log_file_path,
+                        self.log_level,
+                        json_format=enable_json,
+                        show_location=show_location,
                     )
                 )
 
@@ -630,10 +634,12 @@ class PyLogShield(logging.Logger):
         stop the background queue listener thread if async logging is enabled.
         """
         if self._queue_listener is not None:
-            self._queue_listener.stop()
-            for handler in self._queue_listener.handlers:
-                handler.close()
-            self._queue_listener = None
+            try:
+                self._queue_listener.stop()
+            finally:
+                for handler in self._queue_listener.handlers:
+                    handler.close()
+                self._queue_listener = None
 
     def get_metrics(self) -> Optional[Dict[str, Any]]:
         """Return logging metrics if metrics are enabled.
