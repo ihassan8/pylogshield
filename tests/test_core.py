@@ -662,6 +662,30 @@ class TestCustomSensitiveFields:
         assert masked == data
 
 
+class TestExcInfoMasking:
+    def test_mask_bare_exception_instance(self, basic_logger: "PyLogShield") -> None:
+        """exc_info passed as a bare Exception must have its args masked."""
+        exc = ValueError("password=supersecret")
+        basic_logger.error("something failed", mask=True, exc_info=exc)
+        content = basic_logger.log_file_path.read_text()
+        assert "supersecret" not in content
+
+
+class TestMaskSequenceNamedtuple:
+    def test_namedtuple_does_not_crash(self, basic_logger: "PyLogShield") -> None:
+        """Logging a namedtuple with mask=True must not raise TypeError."""
+        from collections import namedtuple
+        Point = namedtuple("Point", ["x", "y"])
+        basic_logger.info(Point(1, 2), mask=True)  # must not raise
+
+    def test_namedtuple_result_is_tuple(self, basic_logger: "PyLogShield") -> None:
+        """_mask on a namedtuple must return a tuple-compatible type."""
+        from collections import namedtuple
+        Point = namedtuple("Point", ["x", "y"])
+        result = basic_logger._mask(Point(1, 2))
+        assert isinstance(result, tuple)
+
+
 def test_rotating_file_handler_rotates(tmp_path: Path) -> None:
     """rotate_file=True must produce backup files after the size threshold."""
     logger = PyLogShield(

@@ -339,7 +339,15 @@ class PyLogShield(logging.Logger):
                 out.append(pattern.sub(_mask_repl, item))  # type: ignore[arg-type]
             else:
                 out.append(item)
-        return type(seq)(out) if isinstance(seq, tuple) else out
+        if isinstance(seq, tuple):
+            if hasattr(type(seq), "_fields"):
+                # namedtuple: constructor takes positional args, not a single iterable
+                try:
+                    return type(seq)(*out)
+                except TypeError:
+                    return tuple(out)  # fallback if field count mismatches
+            return tuple(out)  # plain tuple: constructor takes one iterable
+        return out
 
     def _mask(self, payload: Any) -> Any:
         sensitive_keys = frozenset(s.lower() for s in get_sensitive_fields())
@@ -400,8 +408,12 @@ class PyLogShield(logging.Logger):
             _original_args = None
 
             if exc_info and exc_info is not True:
-                # exc_info may be a (type, value, tb) tuple
-                exc_val = exc_info[1] if isinstance(exc_info, tuple) else None
+                if isinstance(exc_info, tuple):
+                    exc_val = exc_info[1]
+                elif isinstance(exc_info, BaseException):
+                    exc_val = exc_info
+                else:
+                    exc_val = None
                 if exc_val is not None and hasattr(exc_val, "args"):
                     _exc_val = exc_val
                     _original_args = exc_val.args
