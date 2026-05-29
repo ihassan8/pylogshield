@@ -679,11 +679,13 @@ class TestMaskSequenceNamedtuple:
         basic_logger.info(Point(1, 2), mask=True)  # must not raise
 
     def test_namedtuple_result_is_tuple(self, basic_logger: "PyLogShield") -> None:
-        """_mask on a namedtuple must return a tuple-compatible type."""
+        """_mask on a namedtuple must preserve the namedtuple type and values."""
         from collections import namedtuple
         Point = namedtuple("Point", ["x", "y"])
         result = basic_logger._mask(Point(1, 2))
-        assert isinstance(result, tuple)
+        assert type(result) is Point
+        assert result.x == 1
+        assert result.y == 2
 
 
 def test_rotating_file_handler_rotates(tmp_path: Path) -> None:

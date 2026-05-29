@@ -2,14 +2,12 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import sys
 from logging.handlers import QueueHandler, QueueListener
 from pathlib import Path
 from queue import Full, Queue
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Union
-
-if TYPE_CHECKING:
-    import re
+from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Union
 
 from pylogshield.config import add_sensitive_fields as cfg_add_sensitive_fields
 from pylogshield.config import get_sensitive_fields, get_sensitive_pattern
@@ -26,7 +24,7 @@ from pylogshield.metrics import LogMetricsHandler
 from pylogshield.utils import LogLevel, ensure_log_dir
 
 
-def _mask_repl(m: "re.Match[str]") -> str:
+def _mask_repl(m: re.Match[str]) -> str:
     """Replacement for the sensitive-field masking regex.
 
     Preserves surrounding quote characters: token="secret" -> token="***"
@@ -341,12 +339,8 @@ class PyLogShield(logging.Logger):
                 out.append(item)
         if isinstance(seq, tuple):
             if hasattr(type(seq), "_fields"):
-                # namedtuple: constructor takes positional args, not a single iterable
-                try:
-                    return type(seq)(*out)
-                except TypeError:
-                    return tuple(out)  # fallback if field count mismatches
-            return tuple(out)  # plain tuple: constructor takes one iterable
+                return type(seq)(*out)  # namedtuple: unpack positional args
+            return tuple(out)
         return out
 
     def _mask(self, payload: Any) -> Any:
