@@ -273,3 +273,31 @@ class TestCreateRichHandler:
         handler = create_rich_handler(logging.DEBUG)
         assert handler is not None
         assert handler.level == logging.DEBUG
+
+
+class TestJsonFormatterModuleLineno:
+    def test_json_includes_module_and_lineno(self, tmp_path: Path) -> None:
+        """JsonFormatter must include module and lineno in the JSON envelope."""
+        import json
+        import logging as stdlib_logging
+        from pylogshield.handlers import JsonFormatter
+
+        formatter = JsonFormatter()
+        log_path = tmp_path / "test.log"
+        handler = stdlib_logging.FileHandler(str(log_path), encoding="utf-8")
+        handler.setFormatter(formatter)
+
+        logger = stdlib_logging.getLogger("test_json_module_lineno_fix")
+        logger.addHandler(handler)
+        logger.setLevel(stdlib_logging.DEBUG)
+        logger.info("hello from test")
+        handler.close()
+        logger.removeHandler(handler)
+
+        lines = log_path.read_text().strip().splitlines()
+        entry = json.loads(lines[-1])
+        assert "module" in entry, f"module missing from JSON envelope: {entry}"
+        assert "lineno" in entry, f"lineno missing from JSON envelope: {entry}"
+        assert isinstance(entry["lineno"], int)
+        assert entry["lineno"] > 0
+        assert entry["module"] != ""

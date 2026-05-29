@@ -23,6 +23,8 @@ _ENVELOPE_RESERVED: frozenset = frozenset(
         "host",
         "logger",
         "level",
+        "module",
+        "lineno",
         "message",
         "exc_info",
         "stack_info",
@@ -135,6 +137,8 @@ class JsonFormatter(logging.Formatter):
             "host": self.hostname,
             "logger": record.name,
             "level": record.levelname,
+            "module": record.module,
+            "lineno": record.lineno,
             "message": record.getMessage(),
         }
 
