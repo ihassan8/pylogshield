@@ -625,6 +625,8 @@ class PyLogShield(logging.Logger):
         """
         if self._queue_listener is not None:
             self._queue_listener.stop()
+            for handler in self._queue_listener.handlers:
+                handler.close()
             self._queue_listener = None
 
     def get_metrics(self) -> Optional[Dict[str, Any]]:

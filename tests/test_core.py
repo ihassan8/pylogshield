@@ -710,3 +710,29 @@ def test_rotating_file_handler_rotates(tmp_path: Path) -> None:
     assert len(log_files) > 1, (
         f"Expected rotation to create backup files, found: {log_files}"
     )
+
+
+class TestShutdownCleansHandlers:
+    def test_queue_mode_handlers_closed_after_shutdown(
+        self, temp_log_dir: Path
+    ) -> None:
+        """Wrapped file handlers must be closed after shutdown() in queue mode."""
+        logger = PyLogShield(
+            name="test_queue_shutdown",
+            log_directory=temp_log_dir,
+            log_file="queue_test.log",
+            use_queue=True,
+            add_console=False,
+        )
+        logger.info("test message")
+        wrapped = list(logger._queue_listener.handlers) if logger._queue_listener else []
+        logger.shutdown()
+        for h in wrapped:
+            if hasattr(h, "stream"):
+                # After close(), FileHandler sets stream to None; either
+                # None or a closed stream both indicate the fd is released.
+                stream = h.stream
+                assert stream is None or stream.closed, (
+                    f"Handler {h!r} still has an open stream after shutdown()"
+                )
+        close_logger(logger)
