@@ -424,3 +424,29 @@ def test_follow_restarts_after_stop(tmp_path):
 
     assert any("first session" in r.message for r in received_first)
     assert any("second session" in r.message for r in received_second)
+
+
+# ── TestTailLimitZero ─────────────────────────────────────────────────────
+
+
+class TestTailLimitZero:
+    def test_tail_limit_zero_returns_empty_small_file(self, tmp_path: Path) -> None:
+        """Small file (<1MB): limit=0 must return empty list."""
+        from pylogshield.tui.reader import LogReader
+
+        f = tmp_path / "small.log"
+        f.write_text("line1\nline2\nline3\n")
+        reader = LogReader(f)
+        result = reader._tail_lines(limit=0)
+        assert result == [], f"Expected [], got {result}"
+
+    def test_tail_limit_zero_returns_empty_large_file(self, tmp_path: Path) -> None:
+        """Large file (>1MB): limit=0 must return empty list, not all lines."""
+        from pylogshield.tui.reader import LogReader
+
+        f = tmp_path / "large.log"
+        line = "INFO  myapp  core:1  message here\n"
+        f.write_text(line * 40000)  # ~1.4MB
+        reader = LogReader(f)
+        result = reader._tail_lines(limit=0)
+        assert result == [], f"Expected [], got {len(result)} lines"

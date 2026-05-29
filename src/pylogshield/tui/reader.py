@@ -119,6 +119,8 @@ class LogReader:
         return ParsedLine("N/A", "N/A", "", "", 0, line, line)
 
     def _tail_lines(self, limit: int) -> List[str]:
+        if limit == 0:
+            return []
         if not self.path.exists():
             return []
         file_size = self.path.stat().st_size
