@@ -22,7 +22,7 @@ hide:
 <div class="pls-hero__actions">
 
 <a href="installation.md" class="md-button md-button--primary">Get Started</a>
-<a href="https://github.com/vertex-ai-automations/pylogshield" class="md-button">View on GitHub</a>
+<a href="https://github.com/ihassan8/pylogshield" class="md-button">View on GitHub</a>
 
 </div>
 
@@ -77,9 +77,9 @@ hide:
 
 [![PyPI](https://img.shields.io/pypi/v/pylogshield?color=%2300e5a0&logo=pypi&logoColor=white&labelColor=%230c1120)](https://pypi.org/project/pylogshield/)
 [![Python](https://img.shields.io/pypi/pyversions/pylogshield?color=%2300e5a0&logo=python&logoColor=white&labelColor=%230c1120)](https://pypi.org/project/pylogshield/)
-[![License](https://img.shields.io/badge/license-MIT-%2300e5a0.svg?labelColor=%230c1120)](https://github.com/vertex-ai-automations/pylogshield/blob/main/LICENSE.txt)
+[![License](https://img.shields.io/badge/license-MIT-%2300e5a0.svg?labelColor=%230c1120)](https://github.com/ihassan8/pylogshield/blob/main/LICENSE.txt)
 [![Downloads](https://img.shields.io/pypi/dm/pylogshield?color=%2300e5a0&labelColor=%230c1120)](https://pypi.org/project/pylogshield/)
-[![CI](https://img.shields.io/github/actions/workflow/status/vertex-ai-automations/pylogshield/release.yml?branch=main&label=CI&logo=github&labelColor=%230c1120&color=%2300e5a0)](https://github.com/vertex-ai-automations/pylogshield/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/ihassan8/pylogshield/release.yml?branch=main&label=CI&logo=github&labelColor=%230c1120&color=%2300e5a0)](https://github.com/ihassan8/pylogshield/actions)
 
 </div>
 
@@ -359,5 +359,5 @@ Complete API documentation with all parameters and options.
 
 All contributions are welcome! If you have a suggestion that would make this better, please fork the repo and create a pull request.
 
-<a href="https://github.com/vertex-ai-automations/pylogshield" class="md-button">View on GitHub</a>
-<a href="https://github.com/vertex-ai-automations/pylogshield/issues/new" class="md-button">Report an Issue</a>
+<a href="https://github.com/ihassan8/pylogshield" class="md-button">View on GitHub</a>
+<a href="https://github.com/ihassan8/pylogshield/issues/new" class="md-button">Report an Issue</a>

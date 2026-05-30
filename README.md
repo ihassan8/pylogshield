@@ -1,25 +1,23 @@
 <a name="readme-top"></a>
 
 <div align="center">
-<img src="https://github.com/vertex-ai-automations/pylogshield/raw/main/docs/img/pylogshield.png" alt="PyLogShield Logo" width="420">
+<img src="https://github.com/ihassan8/pylogshield/raw/main/docs/img/pylogshield.png" alt="PyLogShield Logo" width="420">
 
 <br/>
 
 [![PyPI version](https://img.shields.io/pypi/v/pylogshield?color=indigo&logo=pypi&logoColor=white)](https://pypi.org/project/pylogshield/)
 [![Python versions](https://img.shields.io/pypi/pyversions/pylogshield?color=indigo&logo=python&logoColor=white)](https://pypi.org/project/pylogshield/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-indigo.svg)](https://github.com/vertex-ai-automations/pylogshield/blob/main/LICENSE.txt)
+[![License: MIT](https://img.shields.io/badge/license-MIT-indigo.svg)](https://github.com/ihassan8/pylogshield/blob/main/LICENSE.txt)
 [![Downloads](https://img.shields.io/pypi/dm/pylogshield?color=indigo)](https://pypi.org/project/pylogshield/)
-[![CI](https://img.shields.io/github/actions/workflow/status/vertex-ai-automations/pylogshield/ci.yml?branch=main&label=CI&logo=github)](https://github.com/vertex-ai-automations/pylogshield/actions/workflows/ci.yml)
-[![Docs](https://img.shields.io/badge/docs-online-indigo?logo=readthedocs&logoColor=white)](https://vertex-ai-automations.github.io/pylogshield)
+[![CI](https://img.shields.io/github/actions/workflow/status/ihassan8/pylogshield/ci.yml?branch=main&label=CI&logo=github)](https://github.com/ihassan8/pylogshield/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-online-indigo?logo=readthedocs&logoColor=white)](https://ihassan8.github.io/pylogshield)
 
 <br/>
 
 <p>
-<a href="https://vertex-ai-automations.github.io/pylogshield"><strong>📃 Documentation</strong></a>
+<a href="https://ihassan8.github.io/pylogshield"><strong>📃 Documentation</strong></a>
 &nbsp;·&nbsp;
-<a href="https://github.com/vertex-ai-automations/pylogshield/issues/new">🔧 Report Bug</a>
-&nbsp;·&nbsp;
-<a href="https://www.vertexaiautomations.com">⛪ Vertex AI Automations</a>
+<a href="https://github.com/ihassan8/pylogshield/issues/new">🔧 Report Bug</a>
 </p>
 
 </div>
@@ -153,7 +151,7 @@ pylogshield tui --file app.log --level ERROR        # start with ERROR+ filter
 pylogshield tui --file app.log --follow             # start in live-follow mode
 ```
 
-![PyLogShield Interactive TUI Viewer](https://github.com/vertex-ai-automations/pylogshield/raw/main/docs/screenshots/tui-demo.gif)
+![PyLogShield Interactive TUI Viewer](https://github.com/ihassan8/pylogshield/raw/main/docs/screenshots/tui-demo.gif)
 
 | Key | Action |
 |-----|--------|
@@ -237,7 +235,7 @@ pylogshield levels
 
 ## CI Pipeline
 
-Every push to `main` and every pull request runs automatically via [shared-workflows](https://github.com/vertex-ai-automations/shared-workflows):
+Every push to `main` and every pull request runs automatically via [shared-workflows](https://github.com/ihassan8/shared-workflows):
 
 | Job | What it checks |
 |-----|----------------|
@@ -252,10 +250,10 @@ All contributions are welcome! Fork the repo, make your changes, and open a pull
 
 Don't forget to ⭐ star the project!
 
-🔶 [View all contributors](https://github.com/vertex-ai-automations/pylogshield/graphs/contributors)
+🔶 [View all contributors](https://github.com/ihassan8/pylogshield/graphs/contributors)
 
 ---
 
-📃 [Full Docs](https://vertex-ai-automations.github.io/pylogshield) &nbsp;·&nbsp; 🔧 [Report a Bug](https://github.com/vertex-ai-automations/pylogshield/issues/new) &nbsp;·&nbsp; ⛪ [Vertex AI Automations](https://www.vertexaiautomations.com)
+📃 [Full Docs](https://ihassan8.github.io/pylogshield) &nbsp;·&nbsp; 🔧 [Report a Bug](https://github.com/ihassan8/pylogshield/issues/new)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

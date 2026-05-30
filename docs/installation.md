@@ -120,7 +120,7 @@ To install for development:
 
 ```bash
 # Clone the repository
-git clone https://github.com/vertex-ai-automations/pylogshield.git
+git clone https://github.com/ihassan8/pylogshield.git
 cd pylogshield
 
 # Install in development mode

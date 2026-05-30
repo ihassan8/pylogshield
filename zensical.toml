@@ -1,20 +1,17 @@
 [project]
 site_name        = "PyLogShield"
 site_description = "A Python logging library designed for data professionals and developers who need reliable, secure logging with minimal setup."
-site_author      = "Vertex AI Automations"
-site_url         = "https://vertex-ai-automations.github.io/pylogshield"
+site_url         = "https://ihassan8.github.io/pylogshield"
 site_dir         = "public"
 docs_dir         = "docs"
 
 repo_name = "pylogshield"
-repo_url  = "https://github.com/vertex-ai-automations/pylogshield"
+repo_url  = "https://github.com/ihassan8/pylogshield"
 edit_uri  = "edit/main/docs/"
 
 strict              = false
 use_directory_urls  = true
 exclude_docs        = "*.py"
-
-copyright = "Copyright &copy; 2024-2026 Vertex AI Automations"
 
 extra_css        = ["css/extra.css"]
 extra_javascript = ["js/extra.js"]
@@ -192,7 +189,7 @@ auto_title         = true
 [project.markdown_extensions.pymdownx.magiclink]
 normalize_issue_symbols = true
 repo_url_shorthand      = true
-user                    = "vertex-ai-automations"
+user                    = "ihassan8"
 repo                    = "pylogshield"
 
 [project.markdown_extensions.pymdownx.mark]
@@ -222,7 +219,7 @@ generator = false
 
 [[project.extra.social]]
 icon = "fontawesome/brands/github"
-link = "https://github.com/vertex-ai-automations/pylogshield"
+link = "https://github.com/ihassan8/pylogshield"
 name = "PyLogShield on GitHub"
 
 [[project.extra.social]]
